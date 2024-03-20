@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Fetch Daily Fortune
         id: fortune
@@ -18,8 +18,8 @@ jobs:
       - name: Update README
         run: |
           sed -i "/<!-- FORTUNE_START -->/,/<!-- FORTUNE_END -->/c\<!-- FORTUNE_START -->\n## Daily Fortune\n\n> \"${{ steps.fortune.outputs.message }}\"\n\n*(Updated on $(date "+%Y-%m-%d"))*\n<!-- FORTUNE_END -->" README.md
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "rizel@tbd.com"
+          git config --local user.name "blackgirlbytes"
           git add README.md
           git commit -m "Update README with daily fortune"
           git push
