@@ -1,28 +1,28 @@
-name: Update README
+name: Update README with Daily Fortune
 
 on:
   schedule:
-    - cron: '0 5 * * *'  # Runs every day at 00:00
+    - cron: '0 5 * * *' # Runs at midnight UTC every day
 
 jobs:
-  build:
+  update-readme:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Fetch motivational quote
-      id: quote
-      uses: JayantGoel001/quote-action@1.0.0
+      - name: Fetch Daily Fortune
+        id: fortune
+        run: |
+          FORTUNE=$(curl -s "https://zenquotes.io/api/random" | jq -r '.[0].q + " -" + .[0].a')
+          echo "::set-output name=message::$FORTUNE"
 
-    - name: Update README
-      run: |
-        echo -e "$(date)\n\n${{ steps.quote.outputs.quote }}" > README.md
+      - name: Update README
+        run: |
+          sed -i "/<!-- FORTUNE_START -->/,/<!-- FORTUNE_END -->/c\<!-- FORTUNE_START -->\n## Daily Fortune\n\n> \"${{ steps.fortune.outputs.message }}\"\n\n*(Updated on $(date "+%Y-%m-%d"))*\n<!-- FORTUNE_END -->" README.md
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update README with daily fortune"
+          git push
 
-    - name: Commit and push if changed
-      run: |
-        git diff
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
-        git commit -am "README updated" || exit 0
-        git push
