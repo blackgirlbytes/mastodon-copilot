@@ -1,8 +1,6 @@
 name: Update README with Daily Fortune
 
-on:
-  schedule:
-    - cron: '0 5 * * *' # Runs at midnight UTC every day
+on: workflow_dispatch
 
 jobs:
   update-readme:
