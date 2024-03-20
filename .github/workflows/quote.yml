@@ -1,0 +1,28 @@
+name: Update README
+
+on:
+  schedule:
+    - cron: '0 5 * * *'  # Runs every day at 00:00
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Fetch motivational quote
+      id: quote
+      uses: JayantGoel001/quote-action@1.0.0
+
+    - name: Update README
+      run: |
+        echo -e "$(date)\n\n${{ steps.quote.outputs.quote }}" > README.md
+
+    - name: Commit and push if changed
+      run: |
+        git diff
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git commit -am "README updated" || exit 0
+        git push
